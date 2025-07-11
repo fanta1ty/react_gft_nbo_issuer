@@ -1,0 +1,8 @@
+export enum LoadUserEnum {
+  HAS_ACCOUNT,
+  HAS_DID_BUT_NO_ACCOUNT,
+  NOT_FOUND,
+  LOADING,
+  ERROR,
+  UNKNOWN,
+}

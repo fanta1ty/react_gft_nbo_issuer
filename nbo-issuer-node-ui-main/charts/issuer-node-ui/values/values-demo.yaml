@@ -1,0 +1,63 @@
+nameOverride: issuer-node-ui
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 256Mi
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: 3000
+    scheme: HTTP
+  initialDelaySeconds: 60
+  periodSeconds: 30
+  successThreshold: 1
+  failureThreshold: 3
+  timeoutSeconds: 5
+readinessProbe:
+  httpGet:
+    path: /
+    port: 3000
+    scheme: HTTP
+  initialDelaySeconds: 60
+  periodSeconds: 30
+  successThreshold: 2
+  failureThreshold: 5
+  timeoutSeconds: 5
+
+ingress:
+  enabled: false
+
+image:
+  issuer:
+    repository: 336241431902.dkr.ecr.eu-central-1.amazonaws.com/nbo/images/issuer-node/ui
+    tag: 1.15.31-gft.1
+    pullPolicy: IfNotPresent
+
+nodeSelector:
+  cloud.google.com/gke-nodepool: application
+
+tolerations:
+- effect: NoExecute
+  key: node-group
+  operator: Equal
+  value: application
+
+ui:
+  port: 3000
+
+imagePullSecrets:
+- name: ecr-credentials
+
+lifecycle:
+  postStart:
+    exec:
+      command: ["/bin/sh", "-c", "find /app -type f -name '*.js' -exec sed -i 's/issuer.dev.nbo.blx-demo.com/issuer.shahadah.digital/g' {} +"]
+
+securityContext:
+  runAsUser: 0
+  runAsGroup: 0
+  fsGroupChangePolicy: "OnRootMismatch"

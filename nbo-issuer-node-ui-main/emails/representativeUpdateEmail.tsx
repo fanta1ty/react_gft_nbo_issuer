@@ -1,0 +1,49 @@
+import { Heading, Section, Container, Link } from "@react-email/components";
+import * as React from "react";
+import Wrapper from "./components/Wrapper";
+import Paragraph from "./components/Paragraph";
+import ActionButton from "./components/ActionButton";
+import IssuerHeader from "./components/IssuerHeader";
+
+export default function RepresentativeUpdateEmail() {
+  const inviter = "{{.Inviter}}";
+  const inviterEmail = "{{.InviterEmail}}";
+  const name = "{{.Name}}";
+  const callback = "{{.Callback}}";
+  const expireIn = "{{.ExpireIn}}" || "24 hours";
+
+  return (
+    <Wrapper previewText="Instructions to update your email">
+      <Container className="w-full max-w-[632px] px-4 mb-20">
+        <IssuerHeader className="mt-5 mb-10" />
+        <Heading
+          as="h1"
+          className="w-[500px] mx-auto text-center text-[24px] font-semibold text-dark-6 mb-10"
+        >
+          Instructions to update your email
+        </Heading>
+        <Paragraph className="font-semibold">Dear {name}</Paragraph>
+        <Paragraph className="mb-7">
+          We've initiated a process to update the email associated with your
+          account. In the next {expireIn}, proceed to create your new password
+          using the link below
+        </Paragraph>
+        <Section className="text-center mb-7">
+          <ActionButton href={callback} className="bg-primary-issuer w-[248px]">
+            Update email
+          </ActionButton>
+        </Section>
+        <Paragraph>
+          If you have any questions or need assistance, please don't hesitate to
+          reach out to {inviter} at{" "}
+          <Link href={`mailto:${inviterEmail}`} className="text-primary-issuer">
+            {inviterEmail}
+          </Link>
+        </Paragraph>
+        <Paragraph className="font-semibold mt-8">
+          The Issuer Portal Team
+        </Paragraph>
+      </Container>
+    </Wrapper>
+  );
+}

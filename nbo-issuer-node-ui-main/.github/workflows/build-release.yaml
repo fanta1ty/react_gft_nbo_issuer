@@ -1,0 +1,130 @@
+name: Build And Release Application Images
+
+on:
+  pull_request:
+    branches: ["main"]
+    types: [opened, synchronize]
+    paths-ignore:
+      - '.github/cache-cleanup.yaml'
+      - '.github/pr-title-check.yaml'
+      - '.husky/**'
+      - 'charts/**'
+      - '.eslint*'
+      - '.gitignore'
+      - '.prettierignore'
+      - 'README.md'
+  push:
+    branches: ["main"]
+    paths-ignore:
+      - '.github/cache-cleanup.yaml'
+      - '.github/pr-title-check.yaml'
+      - '.husky/**'
+      - 'charts/**'
+      - '.eslint*'
+      - '.gitignore'
+      - '.prettierignore'
+      - 'README.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main'  }}
+
+env:
+  AWS_ACCOUNT_ID: 336241431902
+  AWS_REGION: eu-central-1
+  AWS_ROLE_ARN: arn:aws:iam::336241431902:role/shared-services-ci-github-actions-runners-eks-irsa-role
+  DOCKERFILE_PATH: "."
+  ECR_PATH: nbo/images/issuer-node
+
+permissions:
+  contents: read  # This is required for actions/checkout
+  id-token: write # This is required for requesting the JWT
+  pull-requests: read # This is required for generate-matrix.diff
+
+jobs:
+  generate-matrix:
+    name: Generate matrix for build
+    runs-on: shared-services-platform
+    outputs:
+      matrix-include: ${{ steps.set-matrix-include.outputs.matrix-include }}
+      include-count: ${{ steps.set-matrix-include.outputs.include-count }}
+    steps:
+      # Checkout the codebase
+      - id: checkout
+        name: Checkout the codebase
+        uses: actions/checkout@v3.6.0
+        with:
+          fetch-depth: 1
+      # Send all change files to output
+      - id: diff
+        name: Check changed files
+        env:
+          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
+        run: |
+          ./scripts/check-diff.sh
+      # Genrerate matrix base on change files
+      - id: set-matrix-include
+        name: Set matrix include for build
+        env:
+          DIFF: "${{ steps.diff.outputs.diff }}"
+        run: |
+          ./scripts/build-matrix-include.sh
+  build-test-push:
+    name: Build and push the container images
+    needs: generate-matrix
+    if: ${{ needs.generate-matrix.outputs.include-count != 0 }}
+    runs-on: shared-services-apps
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{fromJson(needs.generate-matrix.outputs.matrix-include)}}
+    steps:
+      # Checkout the required images and scripts dirs only for image build pipeline
+      - id: checkout
+        name: Checkout the codebase
+        uses: actions/checkout@v3.6.0
+        with:
+          fetch-depth: 1
+      # This is a separate action that sets up buildx runner
+      - id: setup-buildx
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.0.0
+        with:
+          platforms: linux/amd64
+      # AWS Authentication
+      - id: configure-aws
+        name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.1
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          mask-aws-account-id: true
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+      # ECR Login
+      - id: login-ecr
+        name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v1.7.0
+        with:
+          registries: ${{ env.AWS_ACCOUNT_ID }}
+          mask-password: true
+          registry-type: private
+          skip-logout: false
+      # Check if application image with tag exists in ECR
+      - id: check-ecr-image-existence
+        name: Check ECR image tag existence
+        uses: gft-blx/check-ecr-image-exists@v0.1.6
+        with:
+          image-tag: ${{ matrix.image_version }}-${{ matrix.patch_version }}
+          region: ${{ env.AWS_REGION }}
+          repository-name: ${{ env.ECR_PATH }}/${{ matrix.image_name }}
+      # Build, release, and upload the image
+      - id: build-image
+        name: Build the application 
+        uses: docker/build-push-action@v5.0.0
+        if: ${{ steps.check-ecr-image-existence.outputs.image-exists == '0' }}
+        with:
+          cache-from: type=gha,scope=buildkit,ignore-error=true
+          cache-to: type=gha,mode=max,scope=buildkit
+          context: ${{ env.DOCKERFILE_PATH }}
+          provenance: false
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_PATH }}/${{ matrix.image_name }}:${{ matrix.image_version }}-${{ matrix.patch_version }}

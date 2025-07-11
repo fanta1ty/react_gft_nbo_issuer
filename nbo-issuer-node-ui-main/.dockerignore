@@ -1,0 +1,15 @@
+.git/
+.github/
+.history/
+.husky/
+charts/
+k8s/
+scripts/
+.dockerignore
+.eslint*
+.gitignore
+.nvmrc
+.prettierignore
+Dockerfile
+matrix.json
+*.md

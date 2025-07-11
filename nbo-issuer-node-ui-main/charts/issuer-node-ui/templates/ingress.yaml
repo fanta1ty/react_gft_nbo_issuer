@@ -1,0 +1,52 @@
+{{- if .Values.ingress.enabled -}}
+{{- $serviceUiPort := .Values.ui.port -}}
+{{- $paths := .Values.ingress.paths -}}
+{{- $pathType := .Values.ingress.pathType -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "issuer-node.fullname" . }}-ingress
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app.kubernetes.io/app: {{ include "issuer-node.fullname" . }}
+    app.kubernetes.io/component: {{ include "issuer-node.fullname" . }}
+    app.kubernetes.io/part-of: {{ include "issuer-node.fullname" . }}
+    app.kubernetes.io/namespace: {{ .Release.Namespace }}
+    app.kubernetes.io/release: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: helm
+  {{- if .Values.ingress.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  {{- with .Values.ingress.ingressClassName }}
+  ingressClassName: {{ . }}
+  {{- end }}
+  rules:
+  {{- if .Values.ingress.hosts }}
+    {{- range $host := .Values.ingress.hosts }}
+    - host: {{ $host | quote }}
+      http:
+        paths:
+          {{- range $p := $paths }}
+          - path: /
+            pathType: {{ $pathType }}
+            backend:
+              service:
+                name: {{ include "issuer-node.fullname" $ }}-svc
+                port:
+                  {{- if kindIs "float64" $serviceUiPort }}
+                  number: {{ $serviceUiPort }}
+                  {{- else }}
+                  name: {{ $serviceUiPort }}
+                  {{- end }}
+          {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- with .Values.ingress.tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+{{- end -}}
+{{- end -}}

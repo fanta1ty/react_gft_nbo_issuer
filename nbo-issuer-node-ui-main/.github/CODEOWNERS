@@ -1,0 +1,12 @@
+# Default global ownership
+
+*             @gft-blx/digitaleye_fe_team
+.dockerignore @gft-blx/digitaleye_fe_team @gft-blx/digitaleye_platform_team
+Docekrfile    @gft-blx/digitaleye_fe_team @gft-blx/digitaleye_platform_team
+
+# Platform team ownership
+
+.github/** @gft-blx/digitaleye_platform_team
+charts/**  @gft-blx/digitaleye_platform_team
+k8s/**     @gft-blx/digitaleye_platform_team
+scripts/** @gft-blx/digitaleye_platform_team
