@@ -43,3 +43,5 @@ export type CertificateSchemaType = {
 };
 
 export type PhoneCountryKey = keyof typeof PHONE_COUNTRIES;
+
+export * from "./casbin";
