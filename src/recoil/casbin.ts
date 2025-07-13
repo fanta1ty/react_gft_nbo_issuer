@@ -1,5 +1,6 @@
-import { CasbinState } from "@/types";
+import { CasbinState } from "@/types/casbin";
 import { atom, selector } from "recoil";
+import type { Authorizer } from "casbin.js";
 
 export const casbinState = atom<CasbinState>({
   key: "casbinState",
@@ -21,6 +22,7 @@ export const casbinUserSelector = selector({
       currentUser: casbin.currentUser,
       hasError: !!casbin.error,
       error: casbin.error,
+      authorizer: casbin.authorizer as Authorizer | null,
     };
   },
 });

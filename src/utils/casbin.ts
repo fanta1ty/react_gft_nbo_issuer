@@ -1,13 +1,21 @@
-import casbinjs, { Authorizer } from "casbin.js";
-import { PermissionAction, PermissionResource } from "../types/casbin";
+import type { Authorizer } from "casbin.js";
+import {
+  CasbinPermission,
+  PermissionAction,
+  PermissionResource,
+} from "@/types/casbin";
 
 export const initializeCasbin = async (
   apiEndpoint: string,
 ): Promise<Authorizer> => {
   try {
+    const casbinModule = await import("casbin.js");
+    const casbinjs = casbinModule.default || casbinModule;
+
     const authorizer = new casbinjs.Authorizer("auto", {
       endpoint: `${apiEndpoint}/api/casbin`,
     });
+    console.log("Casbin initialized successfully with endpoint:", apiEndpoint);
     return authorizer;
   } catch (error) {
     console.error("Failed to initialize Casbin:", error);
@@ -34,6 +42,7 @@ export const setCasbinUser = async (
 ): Promise<void> => {
   try {
     await authorizer.setUser(userId);
+    console.log(`Casbin user set to: ${userId}`);
   } catch (error) {
     console.error("Failed to set Casbin user:", error);
     throw error;
