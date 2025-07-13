@@ -1,9 +1,5 @@
 import type { Authorizer } from "casbin.js";
-import {
-  CasbinPermission,
-  PermissionAction,
-  PermissionResource,
-} from "@/types/casbin";
+import { PermissionAction, PermissionResource } from "@/types/casbin";
 
 export const initializeCasbin = async (
   apiEndpoint: string,
