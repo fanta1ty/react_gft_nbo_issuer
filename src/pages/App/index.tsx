@@ -10,6 +10,7 @@ import useThemeWithLocale from "@/theme/theme";
 import { GlobalProgressOverlay, GlobalSnackbar } from "@/components";
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorBoundaryFallback } from "./ErrorBoudaryFallback";
+import { CasbinProvider } from "@/components/CasbinProvider";
 import "@/i18n";
 
 const App = () => {
@@ -18,18 +19,20 @@ const App = () => {
   return (
     <QueryParamProvider adapter={ReactRouter6Adapter}>
       <AuthProvider>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <GlobalProgressOverlay />
-            <ModalProvider>
-              <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
-                <Outlet />
-              </ErrorBoundary>
-              <GlobalSnackbar />
-            </ModalProvider>
-          </ThemeProvider>
-        </LocalizationProvider>
+        <CasbinProvider>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <GlobalProgressOverlay />
+              <ModalProvider>
+                <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
+                  <Outlet />
+                </ErrorBoundary>
+                <GlobalSnackbar />
+              </ModalProvider>
+            </ThemeProvider>
+          </LocalizationProvider>
+        </CasbinProvider>
       </AuthProvider>
     </QueryParamProvider>
   );

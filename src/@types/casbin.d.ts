@@ -6,7 +6,9 @@ declare module "casbin.js" {
 
 export interface AuthorizerOptions {
   endpoint?: string;
-  [key: string]: unknown;
+  timeout?: number;
+  headers?: Record<string, string>;
+  retries?: number;
 }
 
 export class Authorizer {

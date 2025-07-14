@@ -3,7 +3,9 @@ export interface CasbinPermission {
 }
 export interface CasbinAuthorizerOptions {
   endpoint?: string;
-  [key: string]: unknown;
+  timeout?: number;
+  headers?: Record<string, string>;
+  retries?: number;
 }
 
 export interface CasbinUser {
@@ -16,7 +18,7 @@ export interface CasbinState {
   isLoading: boolean;
   error: string | null;
   currentUser: string | null;
-  authorizer: unknown | null;
+  authorizer: unknown;
 }
 
 export type PermissionAction =

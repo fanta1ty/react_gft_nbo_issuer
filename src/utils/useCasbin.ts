@@ -6,7 +6,6 @@ import {
   initializeCasbin,
   setCasbinUser,
 } from "@/utils/casbin";
-
 import { PermissionAction, PermissionResource } from "@/types";
 
 export const useCasbin = () => {

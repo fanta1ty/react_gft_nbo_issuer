@@ -1,6 +1,6 @@
 import { PermissionAction, PermissionResource } from "@/types/casbin";
 import { useCasbin } from "@/utils/useCasbin";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface UsePermissionOptions {
   action: PermissionAction;
@@ -17,7 +17,7 @@ export const usePermission = ({
   const [hasPermission, setHasPermission] = useState(false);
   const [isLoading, setIsLoading] = useState(autoCheck);
 
-  const checkPermission = async () => {
+  const checkPermission = useCallback(async () => {
     if (!isReady) return;
 
     try {
@@ -30,13 +30,13 @@ export const usePermission = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [canAccess, action, resource, isReady]);
 
   useEffect(() => {
     if (autoCheck && isReady) {
       checkPermission();
     }
-  }, [action, resource, isReady, autoCheck]);
+  }, [autoCheck, isReady, checkPermission]);
 
   return {
     hasPermission,
