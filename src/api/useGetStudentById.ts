@@ -11,7 +11,7 @@ type ArgsType = {
 };
 
 const mockStudentsDatabase: { [key: string]: StudentType } = {
-  "usr_001": {
+  usr_001: {
     id: "usr_001",
     firstName: "Alice",
     lastName: "Cooper",
@@ -107,7 +107,7 @@ const mockStudentsDatabase: { [key: string]: StudentType } = {
       },
     ],
   },
-  "usr_002": {
+  usr_002: {
     id: "usr_002",
     firstName: "Bob",
     lastName: "Johnson",
@@ -204,7 +204,7 @@ const mockStudentsDatabase: { [key: string]: StudentType } = {
       },
     ],
   },
-  "usr_003": {
+  usr_003: {
     id: "usr_003",
     firstName: "Carol",
     lastName: "Smith",
@@ -262,7 +262,7 @@ const mockStudentsDatabase: { [key: string]: StudentType } = {
       },
     ],
   },
-  "usr_004": {
+  usr_004: {
     id: "usr_004",
     firstName: "David",
     lastName: "Brown",
@@ -360,7 +360,7 @@ const mockStudentsDatabase: { [key: string]: StudentType } = {
       },
     ],
   },
-  "usr_005": {
+  usr_005: {
     id: "usr_005",
     firstName: "Emma",
     lastName: "Wilson",
