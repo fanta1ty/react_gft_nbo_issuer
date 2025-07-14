@@ -25,13 +25,21 @@ const useGetUserByEmail = (
 ) => {
   return useMutation({
     mutationFn: async (values: ValuesType) => {
-      const { email, authToken } = values;
-      const { data } = await apiService().get(`/v1/users/by-email/${email}`, {
+      // const { email, authToken } = values;
+      // const { data } = await apiService().get(`/v1/users/by-email/${email}`, {
+      //   headers: {
+      //     Authorization: "Basic " + authToken,
+      //   },
+      // });
+      const data = {
+        email: "thinh.ducnguyen@gft.com",
+        firstName: "Thinh",
+        isAdmin: true,
+        lastName: "Nguyen",
         headers: {
-          Authorization: "Basic " + authToken,
+          Authorization: "Basic " + "abcd1234",
         },
-      });
-
+      };
       return data;
     },
     ...options,
