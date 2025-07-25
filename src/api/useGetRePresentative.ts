@@ -13,6 +13,7 @@ export type RepresentativeType = {
   isAdmin: boolean;
   createdAt: string;
   expiredAt: string;
+  roles: string[];
 };
 
 const useGetRepresentative = (

@@ -37,6 +37,19 @@ type MenuParams = {
   showModal: ShowFn;
 } & MenuProps;
 
+const roleDisplayMap: Record<string, string> = {
+  MY_PROFILES: "Wallet Holders",
+  ISSUERS: "Issuers",
+  VERIFIERS: "Verifiers",
+  TEMPLATES: "Template Repository",
+  API_KEYS: "API Key Management",
+  ADMINS: "User Management",
+};
+
+function getDisplayRoles(roles: string[]): string {
+  return roles.map((role) => roleDisplayMap[role] || role).join(", ");
+}
+
 const columns = (
   t: TFunction,
   menuProps: MenuParams,
@@ -112,7 +125,7 @@ const columns = (
   },
   {
     field: "phone",
-    headerName: t("input_phoneLabel"),
+    headerName: t("issuer_user_management_phone_number_Lbl"),
     flex: 0.5,
     disableColumnMenu: true,
     minWidth: 150,
@@ -130,8 +143,77 @@ const columns = (
     },
   },
   {
+    field: "permissions",
+    headerName: t("issuer_user_management_permissions_Lbl"),
+    flex: 0.5,
+    disableColumnMenu: true,
+    minWidth: 166,
+    renderCell({ row }) {
+      return (
+        <Typography
+          variant="text14"
+          whiteSpace="pre-wrap"
+          textTransform="capitalize"
+          fontWeight={400}
+        >
+          {getDisplayRoles(row.roles)}
+        </Typography>
+      );
+    },
+  },
+  {
+    field: "createdDate",
+    headerName: t("issuer_user_management_created_date_Lbl"),
+    flex: 0.5,
+    disableColumnMenu: true,
+    minWidth: 166,
+    renderCell({ row }) {
+      return (
+        <Typography
+          variant="text14"
+          whiteSpace="pre-wrap"
+          textTransform="capitalize"
+          fontWeight={400}
+        >
+          {new Date(row.createdAt)
+            .toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })
+            .replace(",", "")}
+        </Typography>
+      );
+    },
+  },
+  {
+    field: "lastModified",
+    headerName: t("issuer_user_management_last_modified_Lbl"),
+    flex: 0.5,
+    disableColumnMenu: true,
+    minWidth: 166,
+    renderCell({ row }) {
+      return (
+        <Typography
+          variant="text14"
+          whiteSpace="pre-wrap"
+          textTransform="capitalize"
+          fontWeight={400}
+        >
+          {new Date(row.expiredAt)
+            .toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })
+            .replace(",", "")}
+        </Typography>
+      );
+    },
+  },
+  {
     field: "status",
-    headerName: t("th_studentStatus"),
+    headerName: t("issuer_user_management_account_status_Lbl"),
     flex: 0.5,
     disableColumnMenu: true,
     minWidth: 100,

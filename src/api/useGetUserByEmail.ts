@@ -14,6 +14,7 @@ export type ResponseType = UserType;
 type ValuesType = {
   email: string;
   authToken: string;
+  staySignedIn?: boolean;
 };
 
 const useGetUserByEmail = (

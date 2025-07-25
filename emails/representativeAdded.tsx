@@ -5,7 +5,6 @@ import {
   Link,
   Img,
 } from "@react-email/components";
-import * as React from "react";
 import Wrapper from "./components/Wrapper";
 import Paragraph from "./components/Paragraph";
 import { COVER_1_URL } from "./utils/constants";
@@ -42,12 +41,11 @@ export default function RepresentativeAdded() {
         <Paragraph className="font-semibold">Dear {name}</Paragraph>
         <Paragraph>
           We're happy to inform you that you have been invited by {inviter} to
-          become a representative! You can now access our verification services
-          to assess potential candidates's skills and qualifications.
+          become a representative! You can now access our issuance services.
         </Paragraph>
         <Paragraph className="mb-7">
-          In the next {expireIn}, proceed to create your account using the link
-          below:
+          In the next {expireIn} days, proceed to create your account using the
+          link below:
         </Paragraph>
         <Section className="text-center mb-7">
           <ActionButton href={callback} className="bg-primary-issuer w-[248px]">

@@ -29,68 +29,73 @@ export type ValuesType = {
 const transformData = async (value: InferType<typeof schema>) => {
   const {
     companyLogo,
-    companyName,
-    phone,
-    companyWebsite,
-    country,
-    city,
-    companyAddress,
-    companyDescriptionAbout,
-    email,
+    legalName,
+    //legalNameArabic,
+    //registrationNumber,
+    //registrationAuthority,
+    vatNumber,
+    website,
+    //corporateDomainName,
+    //salesTaxGroup,
+    //currency,
+    //methodOfPayment,
+    //ownership,
+    //poBox,
     postalCode,
-    taxIdentificationNumber,
+    street,
+    //district,
+    city,
+    country,
+    //telephoneNumber,
+    //email: companyEmail,
+    //bankName,
+    //branch,
+    //bankAddress,
+    //accountName,
+    //accountNumber,
+    //ibanNumber,
+    description,
   } = value.companyInformation;
+
   const {
-    avatar,
+    profilePicture,
     firstName,
     lastName,
-    email: personalEmail,
-    phone: personalPhone,
+    phoneNumber,
+    dateOfBirth,
     nationality,
     nationalId,
-    dateOfBirth,
+    email: personalEmail,
     password,
-    did,
-    sessionId,
   } = value.personalDetails;
 
   const representative = {
     firstName,
     lastName,
     email: personalEmail,
-    phone: personalPhone,
+    phone: phoneNumber,
     nationality,
     nationalId,
     dateOfBirth: formatDateForIssuerOnboarding(dateOfBirth),
     password,
     city,
-    did,
-    sessionId,
-    ...(avatar ? { avatar: await toBase64(avatar) } : {}),
+    ...(profilePicture ? { avatar: await toBase64(profilePicture) } : {}),
   };
 
   const representatives = [representative];
   const formData = new FormData();
-  formData.append("companyName", companyName);
-  formData.append("email", email);
-  formData.append("phone", phone);
-  formData.append("country", country);
-  formData.append("city", city);
-  formData.append("companyWebsite", companyWebsite);
-  formData.append("companyAddress", companyAddress);
-  formData.append("postalCode", postalCode);
-  formData.append("taxIdentificationNumber", taxIdentificationNumber);
-  formData.append("companyDescription", companyDescriptionAbout);
-  formData.append("companyLogo", companyLogo);
+  formData.append("companyName", legalName);
+  formData.append("email", personalEmail);
+  formData.append("phone", phoneNumber);
+  formData.append("country", country ? country : "");
+  formData.append("city", city ? city : "");
+  formData.append("companyWebsite", website ? website : "");
+  formData.append("companyAddress", street ? street : "");
+  formData.append("postalCode", postalCode ? postalCode : "");
+  formData.append("taxIdentificationNumber", vatNumber ? vatNumber : "");
+  formData.append("companyDescription", description ? description : "");
+  formData.append("companyLogo", companyLogo ? companyLogo : "");
   formData.append("representatives", JSON.stringify(representatives));
-  const { ministerOfEducation, other } = value.documents;
-  if (ministerOfEducation) {
-    formData.append("documents", ministerOfEducation);
-  }
-  if (other) {
-    formData.append("documents", other);
-  }
-  return formData;
 };
 
 export const useIssuerOnboarding = (

@@ -19,7 +19,7 @@ const Login = () => {
       sx={{ flexFlow: "column" }}
       height="100%"
     >
-      <TopBar sx={customWrapperStyles} />
+      <TopBar isEnabledLocale={false} sx={customWrapperStyles} />
 
       <Grid item display="flex" flex="1 1 auto">
         <Grid container direction="row" width="100%">
@@ -27,7 +27,17 @@ const Login = () => {
             <Cover src={loginCover} />
           </Grid>
 
-          <Grid item display="flex" justifyContent="center" xs>
+          <Grid item display="flow">
+            <TopBar
+              isEnabledLogo={false}
+              sx={{
+                backgroundColor: "unset",
+                width: "100%",
+              }}
+            />
+          </Grid>
+
+          <Grid item display="grid" justifyContent="center" xs>
             <LoginForm />
           </Grid>
         </Grid>

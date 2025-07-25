@@ -25,7 +25,18 @@ export type FormDataType = {
   firstName: string;
   lastName: string;
   email: string;
+  confirmEmail: string;
   superAdmin: boolean;
+  permissions: {
+    myProfile: boolean;
+    myIssuerProfile: boolean;
+    users: boolean;
+    certificates: boolean;
+    batchIssuance: boolean;
+    templateRepository: boolean;
+    accountSettings: boolean;
+    apiKeyManagement: boolean;
+  };
 };
 
 const AddRepresentativeDialog = ({
@@ -43,6 +54,16 @@ const AddRepresentativeDialog = ({
       firstName: "",
       lastName: "",
       email: "",
+      permissions: {
+        myProfile: false,
+        myIssuerProfile: false,
+        users: false,
+        certificates: false,
+        batchIssuance: false,
+        templateRepository: false,
+        accountSettings: false,
+        apiKeyManagement: false,
+      },
       superAdmin: false,
     },
   });

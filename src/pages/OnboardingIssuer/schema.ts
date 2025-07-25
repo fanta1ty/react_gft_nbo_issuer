@@ -6,7 +6,6 @@ import { type TestContext } from "yup";
 const yup = getCustomYup();
 
 const LIMIT_AVATAR_SIZE_IN_MB = 2;
-const LIMIT_DOCUMENT_SIZE_IN_MB = 5;
 
 function createPhoneValidationTest() {
   return (value: string, context: TestContext) => {
@@ -35,10 +34,23 @@ function createPhoneValidationTest() {
   };
 }
 
+function extractDomainFromEmail(email: string): string {
+  return email.split("@")[1]?.toLowerCase() || "";
+}
+
+function normalizeDomain(domain: string): string {
+  return domain
+    .toLowerCase()
+    .replace(/^@/, "")
+    .replace(/^https?:\/\//, "")
+    .replace(/^www\./, "")
+    .replace(/\/$/, "")
+    .trim();
+}
+
 export const personalInfoSchema = yup.object<PersonalDetailsType>().shape({
-  avatar: yup
+  profilePicture: yup
     .mixed<File>()
-    .required(t("uploadAvatar"))
     .nullable()
     .test(
       "fileSize",
@@ -50,83 +62,107 @@ export const personalInfoSchema = yup.object<PersonalDetailsType>().shape({
     }),
   firstName: yup.string().required(),
   lastName: yup.string().required(),
-  email: yup.string().email().required(),
-  phone: yup
+  phoneNumber: yup
     .string()
     .required()
     .test("valid-phone-format", createPhoneValidationTest()),
+  dateOfBirth: yup.date().required(),
   nationality: yup.string().required(),
   nationalId: yup.string().required(),
-  dateOfBirth: yup.date().required().nullable(),
-  password: yup.string().required(),
-  confirmPassword: yup
-    .string()
-    .required()
-    .oneOf([yup.ref("password")], t("passwordsMismatch")),
-  did: yup.string().required(),
-  sessionId: yup.string().required(),
-});
-
-export const companyInfoSchema = yup.object<CompanyInformationType>().shape({
-  companyLogo: yup
-    .mixed<File>()
-    .required(t("uploadAvatar"))
-    .test(
-      "fileSize",
-      t("documentFileSize", { size: LIMIT_AVATAR_SIZE_IN_MB }),
-      (file) => file.size < LIMIT_AVATAR_SIZE_IN_MB * 1024 * 1024,
-    )
-    .test("fileType", t("invalidImageFile"), (file) => {
-      return file.type.includes("image");
-    }),
-  companyName: yup.string().required(),
-  phone: yup
-    .string()
-    .required()
-    .test("valid-phone-format", createPhoneValidationTest()),
-  confirmPhone: yup
-    .string()
-    .required()
-    .oneOf([yup.ref("phone")], t("phoneMismatch"))
-    .test("valid-phone-format", createPhoneValidationTest()),
-  companyWebsite: yup.string().url().required(),
-  country: yup.string().required(),
-  city: yup.string().required(),
-  companyAddress: yup.string().required(),
-  companyDescriptionAbout: yup.string().required(),
   email: yup.string().email().required(),
   confirmEmail: yup
     .string()
     .email()
     .required()
     .oneOf([yup.ref("email")], t("emailMismatch")),
-  postalCode: yup.string().required(),
-  taxIdentificationNumber: yup.string().required(),
+  password: yup
+    .string()
+    .required()
+    .min(8, "Password must be at least 8 characters long")
+    .matches(
+      /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+      "Password must contain at least one letter, one number, and one special character (@$!%*?&)",
+    ),
+  confirmPassword: yup
+    .string()
+    .required()
+    .oneOf([yup.ref("password")], t("passwordsMismatch")),
 });
 
-export const documentsSchema = yup.object().shape({
-  ministerOfEducation: yup
+export const companyInfoSchema = yup.object<CompanyInformationType>().shape({
+  companyLogo: yup
     .mixed<File>()
-    .required(t("fileRequired"))
     .test(
       "fileSize",
-      t("documentFileSize", { size: LIMIT_DOCUMENT_SIZE_IN_MB }),
-      (file) => file.size < LIMIT_DOCUMENT_SIZE_IN_MB * 1024 * 1000,
-    ),
-  other: yup
-    .mixed<File>()
-    .optional()
-    .test(
-      "fileSize",
-      t("documentFileSize", { size: LIMIT_DOCUMENT_SIZE_IN_MB }),
-      (file) => (file?.size ?? 0) < LIMIT_DOCUMENT_SIZE_IN_MB * 1024 * 1000,
-    ),
+      t("documentFileSize", { size: LIMIT_AVATAR_SIZE_IN_MB }),
+      (file) => (file?.size ?? 0) < LIMIT_AVATAR_SIZE_IN_MB * 1024 * 1024,
+    )
+    .test("fileType", t("invalidImageFile"), (file) => {
+      return file?.type.includes("image");
+    }),
+  legalName: yup.string().required(),
+  legalNameArabic: yup.string().required(),
+  registrationNumber: yup.string().required(),
+  registrationAuthority: yup.string().required(),
+  vatNumber: yup.string().required(),
+  website: yup.string().url(),
+  corporateDomainName: yup.string(),
+  salesTaxGroup: yup.string(),
+  currency: yup.string(),
+  methodOfPayment: yup.string(),
+  ownership: yup.string(),
+  poBox: yup.string(),
+  postalCode: yup.string(),
+  street: yup.string(),
+  district: yup.string(),
+  city: yup.string(),
+  country: yup.string(),
+  telephoneNumber: yup.string(),
+  email: yup.string().email(),
+  bankName: yup.string(),
+  branch: yup.string(),
+  bankAddress: yup.string(),
+  accountName: yup.string(),
+  accountNumber: yup.string(),
+  ibanNumber: yup.string(),
+  description: yup.string(),
 });
 
-const schema = yup.object({
-  personalDetails: personalInfoSchema,
-  companyInformation: companyInfoSchema,
-  documents: documentsSchema,
-});
+const schema = yup
+  .object({
+    personalDetails: personalInfoSchema,
+    companyInformation: companyInfoSchema,
+  })
+  .test(
+    "email-domain-match",
+    "Email domain must match corporate domain",
+    function (values) {
+      const email = values?.personalDetails?.email;
+      const corporateDomain = values?.companyInformation?.corporateDomainName;
+
+      // Skip validation if either field is empty
+      if (!email || !corporateDomain || corporateDomain === "@") {
+        return true;
+      }
+
+      const emailDomain = extractDomainFromEmail(email);
+      const normalizedCorporateDomain = normalizeDomain(corporateDomain);
+      console.log("emailDomain: ", emailDomain);
+      console.log("normalizedCorporateDomain: ", normalizedCorporateDomain);
+      if (emailDomain !== normalizedCorporateDomain) {
+        return this.createError({
+          path: "personalDetails.email",
+          message: t(
+            "onboarding_issuer_information_email_domain_mismatch_Lbl",
+            {
+              domain: normalizedCorporateDomain,
+            },
+          ),
+        });
+      }
+
+      return true;
+    },
+  );
 
 export default schema;

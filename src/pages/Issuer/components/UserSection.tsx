@@ -69,7 +69,11 @@ const UserSection = () => {
                   </Grid>
 
                   <Grid item>
-                    <Chip label={t("issuer")} color="default" size="small" />
+                    <Chip
+                      label={t("user_section_issuer_Lbl")}
+                      color="default"
+                      size="small"
+                    />
                   </Grid>
                 </Grid>
               </Grid>

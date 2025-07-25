@@ -18,16 +18,32 @@ export enum CompanyAddressType {
 
 export type CompanyInformationType = {
   companyLogo: File;
-  companyName: string;
-  phone: string;
-  companyWebsite: string;
-  country: string;
-  city: string;
-  companyAddress: string;
-  companyDescriptionAbout: string;
-  email: string;
+  legalName: string;
+  legalNameArabic: string;
+  registrationNumber: string;
+  registrationAuthority: string;
+  vatNumber: string;
+  website: string;
+  corporateDomainName: string;
+  salesTaxGroup: string;
+  currency: string;
+  methodOfPayment: string;
+  ownership: string;
+  poBox: string;
   postalCode: string;
-  taxIdentificationNumber: string;
+  street: string;
+  district: string;
+  city: string;
+  country: string;
+  telephoneNumber: string;
+  email: string;
+  bankName: string;
+  branch: string;
+  bankAddress: string;
+  accountName: string;
+  accountNumber: string;
+  ibanNumber: string;
+  description: string;
 };
 
 export enum NationalityType {
@@ -37,18 +53,17 @@ export enum NationalityType {
 }
 
 export type PersonalDetailsType = {
-  avatar: File | null;
+  profilePicture: File | null;
   firstName: string;
   lastName: string;
-  email: string;
-  phone: string;
+  phoneNumber: string;
+  dateOfBirth: Date;
   nationality: string;
   nationalId: string;
-  dateOfBirth: Date | null;
+  email: string;
+  confirmEmail: string;
   password: string;
   confirmPassword: string;
-  did: string;
-  sessionId: string;
 };
 
 export type FormDataType = {

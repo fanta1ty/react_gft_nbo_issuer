@@ -18,48 +18,68 @@ const RepresentativeDataGrid = ({ data }: Props) => {
     useDataGridQueryParams({ pageSize: PAGE_SIZE });
   return (
     <Box sx={{ bgcolor: "common.white", borderRadius: 3, px: 5, mb: 5 }}>
-      <DataGrid
-        rows={data}
-        columns={columns}
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
-        sortModel={sortModel}
-        onSortModelChange={setSortModel}
-        pageSizeOptions={[PAGE_SIZE]}
-        slots={{
-          pagination: DataGridPagination,
-          noRowsOverlay: () => (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100%",
-              }}
-            >
-              <div>{t("noRows")}</div>
-            </div>
-          ),
-        }}
-        rowSelection={false}
-        rowHeight={88}
-        autoHeight
+      <Box
         sx={{
-          "& .MuiDataGrid-row": {
-            cursor: "pointer",
-            "&.Mui-hovered": {
-              backgroundColor: "#eef8f3",
-            },
-          },
-          "& .MuiDataGrid-cell:first-of-type": {
-            paddingLeft: 0,
-            paddingRight: 0,
-          },
-          "& .MuiDataGrid-cell:last-of-type": {
-            paddingRight: 0,
-          },
+          overflowX: "auto",
+          overflowY: "hidden",
+          width: "100%",
+          maxWidth: "100vw",
         }}
-      />
+      >
+        <DataGrid
+          rows={data}
+          columns={columns}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          sortModel={sortModel}
+          onSortModelChange={setSortModel}
+          pageSizeOptions={[PAGE_SIZE]}
+          slots={{
+            pagination: DataGridPagination,
+            noRowsOverlay: () => (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <div>{t("noRows")}</div>
+              </div>
+            ),
+          }}
+          rowSelection={false}
+          rowHeight={88}
+          autoHeight={false}
+          sx={{
+            minWidth: 1400,
+            width: "100%",
+            "& .MuiDataGrid-root": {
+              overflowX: "auto",
+            },
+            "& .MuiDataGrid-main": {
+              overflowX: "auto",
+            },
+            "& .MuiDataGrid-virtualScroller": {
+              overflowX: "auto",
+            },
+            "& .MuiDataGrid-row": {
+              cursor: "pointer",
+              "&.Mui-hovered": {
+                backgroundColor: "#eef8f3",
+              },
+            },
+            "& .MuiDataGrid-cell:first-of-type": {
+              paddingLeft: 0,
+              paddingRight: 0,
+            },
+            "& .MuiDataGrid-cell:last-of-type": {
+              paddingRight: 0,
+            },
+          }}
+        />
+      </Box>
     </Box>
   );
 };

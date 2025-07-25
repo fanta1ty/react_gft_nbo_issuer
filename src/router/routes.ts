@@ -5,12 +5,12 @@ export enum AppRoutes {
   ONBOARDING_ISSUER = "/onboarding/issuer",
   ONBOARDING_ISSUER_PRESENTATIVE_INFORMATION = "/onboarding/issuer/presentative-information",
   ONBOARDING_ISSUER_COMPANY_INFORMATION = "/onboarding/issuer/company-information",
-  ONBOARDING_ISSUER_DOCUMENTS = "/onboarding/issuer/documents",
   ONBOARDING_ISSUER_PREVIEW = "/onboarding/issuer/preview",
   ONBOARDING_COMPLETED = "/onboarding/completed",
   CERTIFICATES = "/certificates",
   CREATE_NEW_CERTIFICATE = "/certificates/create",
   CREATE_NEW_CERTIFICATE_CONFIRM = "/certificates/create-confirm",
+
   ISSUER = "/issuer",
   ISSUER_STUDENTS = "/issuer/students",
   ISSUER_STUDENT_DETAILS = "/issuer/students/:id",
@@ -20,6 +20,8 @@ export enum AppRoutes {
   ISSUER_TEMPLATE_REPOSITORY_DETAILS = "/issuer/template-repository/:id",
   ISSUER_TEMPLATE_REPOSITORY_DEFINE_SCHEMA = "/issuer/template-repository/:id/define-schema",
   ISSUER_REPRESENTATIVE = "/issuer/representative",
+  ISSUER_USER_MANAGEMENT = "/issuer/user-management",
+
   PROFILE = "/profile",
   ONBOARDS_REPRESENTATIVE = "/onboards/representative",
   ONBOARDS_REPRESENTATIVE_REPRESENTATIVE_INFORMATION = "/onboards/representative/representative-information",

@@ -75,16 +75,15 @@ const ConnectWalletDialog = ({
     setValue({
       firstName,
       lastName,
-      dateOfBirth: dobObj,
+      dateOfBirth: dobObj ? dobObj : new Date(),
       email,
       nationality: country,
       nationalId: nationId,
-      phone: phoneNumber,
+      phoneNumber: phoneNumber ? phoneNumber : "",
       confirmPassword: getValue().confirmPassword,
       password: getValue().password,
-      avatar: null,
-      did: data.did,
-      sessionId,
+      confirmEmail: getValue().confirmEmail,
+      profilePicture: null,
     });
     setConnected();
     handleClose();

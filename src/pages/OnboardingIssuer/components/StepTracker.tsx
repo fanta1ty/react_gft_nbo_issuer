@@ -17,12 +17,7 @@ const getStep = (t: TFunction<"translation", undefined>) => {
       link: AppRoutes.ONBOARDING_ISSUER_PRESENTATIVE_INFORMATION,
     },
     {
-      stepId: 3,
-      label: t("documents_Lbl"),
-      link: AppRoutes.ONBOARDING_ISSUER_DOCUMENTS,
-    },
-    {
-      stepId: 4,
+      stepId: 2,
       label: t("preview_Lbl"),
       link: AppRoutes.ONBOARDING_ISSUER_PREVIEW,
     },

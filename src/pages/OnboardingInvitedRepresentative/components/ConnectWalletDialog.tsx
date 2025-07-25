@@ -50,7 +50,7 @@ const ConnectWalletDialog = ({
   const [isNoAccountCreated, setIsNoAccountCreated] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const { data: qrCodeResponse, isFetching } = useGetOnboardingQRCode(
-    sessionIdQueryParam ?? undefined,
+    sessionIdQueryParam ?? undefined
   );
   const checkOnboardApproval = useGetOnboardingQRCodeApprovalStatus();
   const checkApprovalInterval = useRef<NodeJS.Timeout>();
@@ -235,7 +235,7 @@ const ConnectWalletDialog = ({
         </Button>
       </>
     ),
-    [qrCodeResponse, isFetching, isVerifying],
+    [qrCodeResponse, isFetching, isVerifying]
   );
 
   useEffect(() => {

@@ -14,7 +14,7 @@ import { Box, CircularProgress } from "@mui/material";
 import useGetUserByEmail, { UserType } from "@/api/useGetUserByEmail";
 
 export type AuthContextType = Partial<UserType> & {
-  login: (username: string, password: string) => void;
+  login: (username: string, password: string, staySignedIn: boolean) => void;
   logout: () => void;
   isLoading?: boolean;
   isSuccess?: boolean;
@@ -45,9 +45,13 @@ const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     error,
   } = useGetUserByEmail({
     onSuccess(_, variables) {
-      const { authToken } = variables;
+      const { authToken, staySignedIn } = variables;
       axios.defaults.headers.common["Authorization"] = "Basic " + authToken;
-      localStorage.setItem(AUTH_TOKEN_KEY, authToken);
+      if (staySignedIn || storedAuthToken) {
+        localStorage.setItem(AUTH_TOKEN_KEY, authToken);
+      } else {
+        sessionStorage.setItem(AUTH_TOKEN_KEY, authToken);
+      }
       if (from) {
         navigate(from);
       }
@@ -75,9 +79,9 @@ const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   }, [getUserByEmail, storedAuthToken]);
 
   const login = useCallback(
-    (email: string, password: string) => {
+    (email: string, password: string, staySignedIn: boolean) => {
       const authToken = btoa(`${email}:${password}`);
-      getUserByEmail({ email, authToken });
+      getUserByEmail({ email, authToken, staySignedIn });
     },
     [getUserByEmail],
   );

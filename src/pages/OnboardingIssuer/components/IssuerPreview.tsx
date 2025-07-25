@@ -5,7 +5,6 @@ import {
   FormControlLabel,
   Checkbox,
   Box,
-  Stack,
 } from "@mui/material";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -13,9 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { AppRoutes } from "@/router/routes";
 import Card from "@/components/NBOCard";
 import FooterNav from "@/components/FooterNav";
-import { formatDate } from "@/utils/datetime";
 import { useIssuerOnboarding } from "@/api/usePostIssuerOnboarding";
-import { InputFileUploaderFormControl } from "@/components/InputFileUploaderControl";
 import { type InferType } from "yup";
 import schema from "../schema";
 import { globalSnackbarState } from "@/recoil/atoms";
@@ -23,7 +20,6 @@ import { useSetRecoilState } from "recoil";
 import useProgressOverlay from "@/utils/useProgressOverlay";
 import { useTranslation } from "react-i18next";
 import { formatPhoneNumber } from "@/utils/phoneOperations";
-import { Country } from "country-state-city";
 
 const IssuerPreview = () => {
   const navigate = useNavigate();
@@ -43,32 +39,49 @@ const IssuerPreview = () => {
   });
 
   const formValues = getValues();
-  const { companyInformation, personalDetails, documents } = formValues;
+  const { companyInformation, personalDetails } = formValues;
   const {
     companyLogo,
-    companyName,
-    phone,
-    companyWebsite,
-    country,
-    city,
-    companyAddress,
-    companyDescriptionAbout,
-    email,
+    legalName,
+    legalNameArabic,
+    registrationNumber,
+    registrationAuthority,
+    vatNumber,
+    website,
+    corporateDomainName,
+    salesTaxGroup,
+    currency,
+    methodOfPayment,
+    ownership,
+    poBox,
     postalCode,
-    taxIdentificationNumber,
+    street,
+    district,
+    city,
+    country,
+    telephoneNumber,
+    email: companyEmail,
+    bankName,
+    branch,
+    bankAddress,
+    accountName,
+    accountNumber,
+    ibanNumber,
+    description,
   } = companyInformation;
+
   const {
-    avatar,
+    profilePicture,
     firstName,
     lastName,
-    email: personalEmail,
-    phone: personalPhone,
+    phoneNumber,
+    dateOfBirth,
     nationality,
     nationalId,
-    dateOfBirth,
+    email: personalEmail,
     password,
   } = personalDetails;
-  const { ministerOfEducation, other } = documents;
+
   const onSubmit = async () => {
     mutate(formValues, {
       onSuccess: () => {
@@ -90,123 +103,426 @@ const IssuerPreview = () => {
       },
     });
   };
-  const avatarUrl = avatar && URL.createObjectURL(avatar);
+  const profilePictureUrl =
+    profilePicture && URL.createObjectURL(profilePicture);
+
   const companyLogoUrl = companyLogo && URL.createObjectURL(companyLogo);
-  const companyDetails = (
+
+  const issuerDetails = (
     <>
       <Avatar
         src={companyLogoUrl ? companyLogoUrl : undefined}
-        sx={{ width: 148, height: 148, mb: 3.5 }}
+        sx={{ width: 148, height: 148, mb: 1.0 }}
+        variant="rounded"
       />
-      <Grid item sx={{ mb: 3.5 }}>
+      <Grid item>
         <Grid container direction="row" gap={2.5}>
           <Grid item xs>
             <Typography
               variant="text12"
+              fontWeight={400}
               color="custom.blue.6"
               sx={{ mb: 1.5, mt: 3.5 }}
             >
               {t("issuer_name_Lbl")}
             </Typography>
-            <Typography variant="text14">{companyName || "--"}</Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {legalName || "--"}
+            </Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+            >
+              {t("issuer_name_arabic_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {legalNameArabic || "--"}
+            </Typography>
           </Grid>
         </Grid>
-      </Grid>
 
-      <Grid container direction="row" gap={2.5}>
-        <Grid item xs>
-          <Typography
-            variant="text12"
-            color="custom.blue.6"
-            sx={{ mb: 1.5, mt: 3.5 }}
-          >
-            {t("input_emailLabel")}
-          </Typography>
-          <Typography variant="text14">{email || "--"}</Typography>
-        </Grid>
-        <Grid item xs>
-          <Typography
-            variant="text12"
-            color="custom.blue.6"
-            sx={{ mb: 1.5, mt: 3.5 }}
-          >
-            {t("input_phoneLabel")}
-          </Typography>
-          <Typography variant="text14">
-            {formatPhoneNumber(phone) || "--"}
-          </Typography>
-        </Grid>
-      </Grid>
-
-      <Grid container direction="row" gap={2.5}>
-        <Grid item xs>
-          <Typography
-            variant="text12"
-            color="custom.blue.6"
-            sx={{ mb: 1.5, mt: 3.5 }}
-          >
-            {t("issuer_website_Lbl")}
-          </Typography>
-          <Typography variant="text14">{companyWebsite || "--"}</Typography>
-        </Grid>
-      </Grid>
-      <Grid container direction="row" gap={2.5}>
-        <Grid item xs>
-          <Typography
-            variant="text12"
-            color="custom.blue.6"
-            sx={{ mb: 1.5, mt: 3.5 }}
-          >
-            {t("input_countryLabel")}
-          </Typography>
-          <Typography variant="text14">
-            {country ? Country.getCountryByCode(country)?.name : "--"}
-          </Typography>
-        </Grid>
-        <Grid item xs>
-          <Typography
-            variant="text12"
-            color="custom.blue.6"
-            sx={{ mb: 1.5, mt: 3.5 }}
-          >
-            City
-          </Typography>
-          <Typography variant="text14">{city || "--"}</Typography>
-        </Grid>
-      </Grid>
-      <Grid container direction="row" gap={2.5}>
-        <Grid item xs>
-          <Typography
-            variant="text12"
-            color="custom.blue.6"
-            sx={{ mb: 1.5, mt: 3.5 }}
-          >
-            {t("issuer_address_Lbl")}
-          </Typography>
-          <Typography variant="text14">{companyAddress || "--"}</Typography>
-        </Grid>
-        <Grid item xs></Grid>
         <Grid container direction="row" gap={2.5}>
           <Grid item xs>
             <Typography
               variant="text12"
+              fontWeight={400}
               color="custom.blue.6"
               sx={{ mb: 1.5, mt: 3.5 }}
             >
-              {t("postal_code_Lbl")}
+              {t("issuer_registration_no_Lbl")}
             </Typography>
-            <Typography variant="text14">{postalCode || "--"}</Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {registrationNumber || "--"}
+            </Typography>
+          </Grid>
+        </Grid>
+
+        <Grid container direction="row" gap={2.5}>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+            >
+              {t("issuer_registration_authority_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {registrationAuthority || "--"}
+            </Typography>
           </Grid>
           <Grid item xs>
             <Typography
               variant="text12"
+              fontWeight={400}
               color="custom.blue.6"
               sx={{ mb: 1.5, mt: 3.5 }}
             >
-              {t("tax_identification_number_Lbl")}
+              {t("issuer_vat_no_Lbl")}
             </Typography>
-            <Typography variant="text14">
-              {taxIdentificationNumber || "--"}
+            <Typography variant="text14" fontWeight={600}>
+              {vatNumber || "--"}
+            </Typography>
+          </Grid>
+        </Grid>
+
+        <Grid container direction="row" gap={2.5}>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+            >
+              {t("issuer_preview_issuer_website_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {website || "--"}
+            </Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+            >
+              {t("issuer_corporate_domain_name_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {corporateDomainName || "--"}
+            </Typography>
+          </Grid>
+        </Grid>
+
+        <Grid container direction="row" gap={2.5}>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+            >
+              {t("issuer_sales_tax_group_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {salesTaxGroup || "--"}
+            </Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+            >
+              {t("issuer_currency_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {currency || "--"}
+            </Typography>
+          </Grid>
+        </Grid>
+
+        <Grid container direction="row" gap={2.5}>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+            >
+              {t("issuer_method_of_payment_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {methodOfPayment || "--"}
+            </Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+            >
+              {t("issuer_ownership_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {ownership || "--"}
+            </Typography>
+          </Grid>
+        </Grid>
+      </Grid>
+    </>
+  );
+
+  const issuerAddressDetails = (
+    <>
+      <Grid item>
+        <Grid container direction="row" gap={2.5}>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 1.0 }}
+            >
+              {t("issuer_po_box_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {poBox || "--"}
+            </Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 1 }}
+            >
+              {t("issuer_postal_code_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {postalCode || "--"}
+            </Typography>
+          </Grid>
+        </Grid>
+
+        <Grid container direction="row" gap={2.5}>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+            >
+              {t("issuer_street_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {street || "--"}
+            </Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+            >
+              {t("issuer_district_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {district || "--"}
+            </Typography>
+          </Grid>
+        </Grid>
+
+        <Grid container direction="row" gap={2.5}>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+            >
+              {t("issuer_city_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {city || "--"}
+            </Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+            >
+              {t("issuer_country_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {country || "--"}
+            </Typography>
+          </Grid>
+        </Grid>
+      </Grid>
+    </>
+  );
+
+  const issuerContactDetails = (
+    <>
+      <Grid item>
+        <Grid container direction="row" gap={2.5}>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 1.0 }}
+            >
+              {t("issuer_preview_issuer_phone_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {telephoneNumber || "--"}
+            </Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 1 }}
+            >
+              {t("issuer_preview_issuer_email_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {companyEmail || "--"}
+            </Typography>
+          </Grid>
+        </Grid>
+      </Grid>
+    </>
+  );
+
+  const issuerBankInfo = (
+    <>
+      <Grid item>
+        <Grid container direction="row" gap={2.5}>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 1.0 }}
+            >
+              {t("issuer_bank_name_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {bankName || "--"}
+            </Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 1 }}
+            >
+              {t("issuer_branch_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {branch || "--"}
+            </Typography>
+          </Grid>
+        </Grid>
+
+        <Grid container direction="row" gap={2.5}>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+            >
+              {t("issuer_bank_address_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {bankAddress || "--"}
+            </Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+            >
+              {t("issuer_account_name_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {accountName || "--"}
+            </Typography>
+          </Grid>
+        </Grid>
+
+        <Grid container direction="row" gap={2.5}>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+            >
+              {t("issuer_bank_address_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {bankAddress || "--"}
+            </Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+            >
+              {t("issuer_account_name_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {accountName || "--"}
+            </Typography>
+          </Grid>
+        </Grid>
+
+        <Grid container direction="row" gap={2.5}>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+            >
+              {t("issuer_account_no_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {accountNumber || "--"}
+            </Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              fontWeight={400}
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+            >
+              {t("issuer_iban_no_Lbl")}
+            </Typography>
+            <Typography variant="text14" fontWeight={600}>
+              {ibanNumber || "--"}
             </Typography>
           </Grid>
         </Grid>
@@ -217,17 +533,19 @@ const IssuerPreview = () => {
   const representativeDetails = (
     <>
       <Avatar
-        src={avatarUrl ? avatarUrl : undefined}
-        sx={{ width: 148, height: 148, mb: 3.5 }}
+        src={profilePictureUrl ? profilePictureUrl : undefined}
+        sx={{ width: 148, height: 148, mb: 1.0 }}
+        variant="rounded"
       />
 
-      <Grid item sx={{ mb: 3.5 }}>
+      <Grid item>
         <Grid container direction="row" gap={2.5}>
           <Grid item xs>
             <Typography
               variant="text12"
               color="custom.blue.6"
               sx={{ mb: 1.5, mt: 3.5 }}
+              fontWeight={400}
             >
               {t("input_firstNameLabel")}
             </Typography>
@@ -238,73 +556,66 @@ const IssuerPreview = () => {
               variant="text12"
               color="custom.blue.6"
               sx={{ mb: 1.5, mt: 3.5 }}
+              fontWeight={400}
             >
               {t("input_lastNameLabel")}
             </Typography>
             <Typography variant="text14">{lastName || "--"}</Typography>
           </Grid>
         </Grid>
-      </Grid>
 
-      <Grid container direction="row" gap={2.5}>
-        <Grid item xs>
-          <Typography
-            variant="text12"
-            color="custom.blue.6"
-            sx={{ mb: 1.5, mt: 3.5 }}
-          >
-            {t("input_emailLabel")}
-          </Typography>
-          <Typography variant="text14">{personalEmail || "--"}</Typography>
+        <Grid container direction="row" gap={2.5}>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+              fontWeight={400}
+            >
+              {t("representative_phone_number_Lbl")}
+            </Typography>
+            <Typography variant="text14">
+              {formatPhoneNumber(phoneNumber) || "--"}
+            </Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+              fontWeight={400}
+            >
+              {t("representative_dob_Lbl")}
+            </Typography>
+            <Typography variant="text14">
+              {dateOfBirth ? dateOfBirth.toString() : "--"}
+            </Typography>
+          </Grid>
         </Grid>
-        <Grid item xs>
-          <Typography
-            variant="text12"
-            color="custom.blue.6"
-            sx={{ mb: 1.5, mt: 3.5 }}
-          >
-            {t("input_phoneLabel")}
-          </Typography>
-          <Typography variant="text14">
-            {formatPhoneNumber(personalPhone) || "--"}
-          </Typography>
-        </Grid>
-      </Grid>
 
-      <Grid container direction="row" gap={2.5}>
-        <Grid item xs>
-          <Typography
-            variant="text12"
-            color="custom.blue.6"
-            sx={{ mb: 1.5, mt: 3.5 }}
-          >
-            {t("input_nationalityLabel")}
-          </Typography>
-          <Typography variant="text14">
-            {nationality ? Country.getCountryByCode(nationality)?.name : "--"}
-          </Typography>
-        </Grid>
-        <Grid item xs>
-          <Typography
-            variant="text12"
-            color="custom.blue.6"
-            sx={{ mb: 1.5, mt: 3.5 }}
-          >
-            {t("input_nationalIDLabel")}
-          </Typography>
-          <Typography variant="text14">{nationalId || "--"}</Typography>
-        </Grid>
-      </Grid>
-      <Grid container direction="row" gap={2.5}>
-        <Grid item xs>
-          <Typography
-            variant="text12"
-            color="custom.blue.6"
-            sx={{ mb: 1.5, mt: 3.5 }}
-          >
-            {t("input_dateOfBirthLabel")}
-          </Typography>
-          <Typography variant="text14">{formatDate(dateOfBirth)}</Typography>
+        <Grid container direction="row" gap={2.5}>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+              fontWeight={400}
+            >
+              {t("representative_nationality_Lbl")}
+            </Typography>
+            <Typography variant="text14">{nationality || "--"}</Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography
+              variant="text12"
+              color="custom.blue.6"
+              sx={{ mb: 1.5, mt: 3.5 }}
+              fontWeight={400}
+            >
+              {t("representative_national_id_Lbl")}
+            </Typography>
+            <Typography variant="text14">{nationalId || "--"}</Typography>
+          </Grid>
         </Grid>
       </Grid>
     </>
@@ -319,21 +630,44 @@ const IssuerPreview = () => {
       }}
     >
       <Grid item>
-        <Card title={t("issuer_details_Lbl")}>{companyDetails}</Card>
+        <Card title={t("issuer_preview_issuer_details_Lbl")}>
+          {issuerDetails}
+        </Card>
       </Grid>
+
       <Grid item>
-        <Card title="Representative Details">{representativeDetails}</Card>
+        <Card title={t("issuer_issuer_address_details_Lbl")}>
+          {issuerAddressDetails}
+        </Card>
       </Grid>
+
       <Grid item>
-        <Card title="Log in details">
+        <Card title={t("issuer_issuer_contact_details_Lbl")}>
+          {issuerContactDetails}
+        </Card>
+      </Grid>
+
+      <Grid item>
+        <Card title={t("issuer_bank_information_Lbl")}>{issuerBankInfo}</Card>
+      </Grid>
+
+      <Grid item>
+        <Card title={t("representative_details_Lbl")}>
+          {representativeDetails}
+        </Card>
+      </Grid>
+
+      <Grid item>
+        <Card title={t("issuer_preview_login_details_Lbl")}>
           <Grid container direction="row">
             <Grid item xs>
               <Typography
                 variant="text12"
                 color="custom.blue.6"
-                sx={{ mb: 1.5, mt: 3.5 }}
+                sx={{ mb: 1.5, mt: 1.0 }}
+                fontWeight={400}
               >
-                {t("log_in_email_Lbl")}
+                {t("issuer_preview_login_email_Lbl")}
               </Typography>
               <Typography variant="text14">{personalEmail || "--"}</Typography>
             </Grid>
@@ -344,7 +678,8 @@ const IssuerPreview = () => {
                   <Typography
                     variant="text12"
                     color="custom.blue.6"
-                    sx={{ mb: 1.5, mt: 3.5 }}
+                    sx={{ mb: 1.5, mt: 1.0 }}
+                    fontWeight={400}
                   >
                     {t("input_passwordLabel")}
                   </Typography>
@@ -376,57 +711,34 @@ const IssuerPreview = () => {
           </Grid>
         </Card>
       </Grid>
+
       <Grid item>
         <Card title={t("about_Lbl")}>
-          <Grid item sx={{ mb: 3.5 }}>
+          <Grid item>
             <Grid container direction="row" gap={2.5}>
               <Grid item xs>
                 <Typography
                   variant="text12"
                   color="custom.blue.6"
-                  sx={{ mb: 1.5, mt: 3.5 }}
+                  sx={{ mt: 1.0 }}
+                  fontWeight={400}
                 >
                   {t("about_Lbl")}
                 </Typography>
-                <Typography variant="text14">
-                  {companyDescriptionAbout || "--"}
+                <Typography variant="text14" sx={{ mt: 2.5 }}>
+                  {description || "--"}
                 </Typography>
               </Grid>
             </Grid>
           </Grid>
         </Card>
       </Grid>
-      <Grid item>
-        <Card title={t("document_Lbl")}>
-          <Stack gap={3.5}>
-            <InputFileUploaderFormControl
-              label={t("ministry_of_education_Lbl")}
-              value={ministerOfEducation || null}
-              FileInputProps={{
-                isReview: true,
-                onEdit: () => {
-                  navigate(AppRoutes.ONBOARDING_ISSUER_DOCUMENTS);
-                },
-              }}
-            />
-            <InputFileUploaderFormControl
-              label={t("other_document_Lbl")}
-              value={other || null}
-              FileInputProps={{
-                isReview: true,
-                onEdit: () => {
-                  navigate(AppRoutes.ONBOARDING_ISSUER_DOCUMENTS);
-                },
-              }}
-            />
-          </Stack>
-        </Card>
-      </Grid>
+
       <Grid item>
         <FooterNav
           hideCancelButton
           onClickBack={() => {
-            navigate(AppRoutes.ONBOARDING_ISSUER_DOCUMENTS);
+            navigate(AppRoutes.ONBOARDING_ISSUER_PRESENTATIVE_INFORMATION);
           }}
           onClickNext={handleSubmit(onSubmit)}
           buttonNextText={t("button_submit")}

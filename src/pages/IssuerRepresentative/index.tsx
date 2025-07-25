@@ -1,4 +1,3 @@
-import NavTabs from "@/components/NavTabs";
 import { useTranslation } from "react-i18next";
 import {
   Typography,
@@ -17,27 +16,15 @@ import { ReactComponent as GlobeIcon } from "@/assets/icons/ic_website.svg";
 import { ReactComponent as EmailIcon } from "@/assets/icons/ic_mail.svg";
 import { ReactComponent as PhoneIcon } from "@/assets/icons/ic_phone.svg";
 import { ReactComponent as EditIcon } from "@/assets/icons/ic_edit.svg";
-import { ensureHttpPrefix } from "@/utils/ensureHttpPrefix";
 import { RepresentativeDetails } from "./components/Details";
-import Representative from "./components/Representative";
-import { useLocation } from "react-router-dom";
 import { useAuthContext } from "@/router/Auth";
 import avatarIssuer from "@/assets/images/avatar-issuer.png";
 import { Status } from "@/@types";
 
 const IssuerRepresentative = () => {
   const { t } = useTranslation();
-  const location = useLocation();
   const { firstName, lastName, isAdmin } = useAuthContext();
-  const localTabsData = [
-    {
-      label: t("representatives"),
-      value: "representative",
-      href: "#representative",
-    },
-    { label: t("details"), value: "details", href: "#details" },
-  ];
-  const currentTab = location.hash.replace("#", "");
+
   return (
     <>
       <Box sx={{ pt: 5, backgroundColor: "#fff" }}>
@@ -103,7 +90,7 @@ const IssuerRepresentative = () => {
             >
               <IconButton
                 component="a"
-                href={ensureHttpPrefix("tt.com.pl" || "")}
+                // href={ensureHttpPrefix("tt.com.pl" || "")}
                 target="_blank"
               >
                 <GlobeIcon />
@@ -122,14 +109,10 @@ const IssuerRepresentative = () => {
               </IconButton>
             </Grid>
           </Grid>
-          <NavTabs tabs={localTabsData} />
         </Box>
       </Box>
       <Root mt={3.5} mb={20} mx="auto">
-        {currentTab === "details" && <RepresentativeDetails />}
-        {!currentTab || currentTab === "representative" ? (
-          <Representative />
-        ) : null}
+        <RepresentativeDetails />
       </Root>
     </>
   );

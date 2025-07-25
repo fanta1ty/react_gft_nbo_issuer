@@ -14,8 +14,8 @@ import {
   OnboardingIssuer,
   OnboardingIssuerCompanyInformation,
   OnboardingIssuerRepresentativeInformation,
-  OnboardingIssuerDocuments,
   OnboardingIssuerPreview,
+  IssuerUserManagement,
 } from "@/pages";
 import { UnauthenticatedRoute, AuthenticatedRoute } from "./Auth";
 import { AppRoutes } from "./routes";
@@ -71,10 +71,6 @@ export const appRouter = createBrowserRouter([
           {
             path: AppRoutes.ONBOARDING_ISSUER_PRESENTATIVE_INFORMATION,
             element: <OnboardingIssuerRepresentativeInformation />,
-          },
-          {
-            path: AppRoutes.ONBOARDING_ISSUER_DOCUMENTS,
-            element: <OnboardingIssuerDocuments />,
           },
           {
             path: AppRoutes.ONBOARDING_ISSUER_PREVIEW,
@@ -193,6 +189,10 @@ export const appRouter = createBrowserRouter([
           {
             path: AppRoutes.ISSUER_REPRESENTATIVE,
             element: <IssuerRepresentative />,
+          },
+          {
+            path: AppRoutes.ISSUER_USER_MANAGEMENT,
+            element: <IssuerUserManagement />,
           },
         ],
       },

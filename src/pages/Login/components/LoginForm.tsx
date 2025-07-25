@@ -8,6 +8,8 @@ import {
   Link,
   Grid,
   Alert,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import { AppRoutes } from "@/router/routes";
 import { useAuthContext } from "@/router/Auth";
@@ -15,6 +17,7 @@ import { useAuthContext } from "@/router/Auth";
 type FormDataType = {
   email: string;
   password: string;
+  staySignedIn: boolean;
 };
 
 const LoginForm = () => {
@@ -28,13 +31,18 @@ const LoginForm = () => {
     defaultValues: {
       email: "",
       password: "",
+      staySignedIn: false,
     },
   });
 
   const { login, isError, errorMessage = "" } = useAuthContext();
 
-  const handleLogin: SubmitHandler<FormDataType> = ({ email, password }) => {
-    login(email, password);
+  const handleLogin: SubmitHandler<FormDataType> = ({
+    email,
+    password,
+    staySignedIn,
+  }) => {
+    login(email, password, staySignedIn);
   };
 
   return (
@@ -70,7 +78,7 @@ const LoginForm = () => {
             render={({ field }) => (
               <TextField
                 {...field}
-                label={t("input_emailLabel")}
+                label={t("login_form_your_email_Lbl")}
                 placeholder={t("input_emailPlaceholder")}
                 sx={{ mb: 2.5 }}
                 fullWidth
@@ -96,6 +104,28 @@ const LoginForm = () => {
               />
             )}
           />
+
+          <Grid container>
+            <Grid item>
+              <Controller
+                name={"staySignedIn"}
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <FormControlLabel
+                    sx={{ mb: 3 }}
+                    label={t("login_form_stay_sign_in_Lbl")}
+                    control={
+                      <Checkbox
+                        color="default"
+                        checked={value}
+                        onChange={(e) => onChange(e.target.checked)}
+                      />
+                    }
+                  />
+                )}
+              />
+            </Grid>
+          </Grid>
           <Button color="primary" fullWidth sx={{ mb: 2.5 }} type="submit">
             {t("button_loginText")}
           </Button>
@@ -109,9 +139,7 @@ const LoginForm = () => {
           sx={{ textAlign: "center" }}
           textAlign="center"
         >
-          {`${t("login_signupQuestion")} ${t("login_signupLinkText")} ${t(
-            "as",
-          )} `}
+          {`${t("login_signupQuestion")}`}
           <Link
             variant="text16"
             fontWeight={400}

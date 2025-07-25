@@ -9,7 +9,7 @@ import { AppRoutes } from "@/router/routes";
 export type Props = MenuProps & { handleClose: () => void };
 
 const UserSectionMenu: FC<Props> = ({ handleClose, ...rest }) => {
-  const { logout } = useAuthContext();
+  const { isAdmin, logout } = useAuthContext();
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -55,6 +55,14 @@ const UserSectionMenu: FC<Props> = ({ handleClose, ...rest }) => {
       <MenuItem onClick={() => navigate(AppRoutes.ISSUER_REPRESENTATIVE)}>
         {t("my_issuer_profile")}
       </MenuItem>
+      {isAdmin && (
+        <>
+          <Divider sx={{ mx: 2 }} />
+          <MenuItem onClick={() => navigate(AppRoutes.ISSUER_USER_MANAGEMENT)}>
+            {t("user_section_menu_user_management_Lbl")}
+          </MenuItem>{" "}
+        </>
+      )}
       <Divider sx={{ mx: 2 }} />
       <MenuItem onClick={onClickLogout}>{t("button_logoutText")}</MenuItem>
     </Menu>

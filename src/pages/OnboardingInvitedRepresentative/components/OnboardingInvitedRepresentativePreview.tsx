@@ -261,7 +261,7 @@ const OnboardingInvitedRepresentativePreview = () => {
         <FooterNav
           hideCancelButton
           onClickBack={() => {
-            navigate(AppRoutes.ONBOARDING_ISSUER_DOCUMENTS);
+            navigate(AppRoutes.ONBOARDING_ISSUER_PRESENTATIVE_INFORMATION);
           }}
           onClickNext={handleSubmit(onSubmit)}
           buttonNextText={t("button_submit")}

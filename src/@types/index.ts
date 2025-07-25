@@ -24,6 +24,7 @@ export type IssuerType = {
   taxIdentificationNumber: string;
   status: Status;
   did: string;
+  legalName: string;
 };
 
 export type HolderType = {
@@ -115,6 +116,7 @@ export type OnboardsType = {
   action: string;
   status: Status;
   representatives: RepresentativeType[];
+  legalName: string;
 };
 
 export type SchemaFieldType = {
@@ -134,6 +136,7 @@ export type TemplateIssuer = {
   companyLogo: string;
   companyName: string;
   id: string;
+  legalName: string;
 };
 
 export type SchemaType = {

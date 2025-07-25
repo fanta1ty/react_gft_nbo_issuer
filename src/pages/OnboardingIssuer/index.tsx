@@ -1,28 +1,51 @@
 import { FormProvider, useForm } from "react-hook-form";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { Grid, Stack, Typography } from "@mui/material";
 import StepTracker from "./components/StepTracker";
 import { yupResolver } from "@hookform/resolvers/yup";
 import schema from "./schema";
 import { TopBar } from "@/components";
 import { useTranslation } from "react-i18next";
+import { useMemo } from "react";
 
 const FORM_ID = "employer-onboarding";
 
 const OnboardingIssuer = () => {
+  const location = useLocation();
+
   const formMethods = useForm({
     reValidateMode: "onChange",
     mode: "onChange",
     resolver: yupResolver(schema),
     defaultValues: {
       companyInformation: {},
-      documents: {},
       personalDetails: {
-        avatar: null,
+        profilePicture: null,
       },
     },
   });
+
   const { t } = useTranslation();
+
+  const currentStep = useMemo(() => {
+    const path = location.pathname;
+
+    if (path.includes("/company-information")) return 1;
+    if (path.includes("/presentative-information")) return 2;
+    if (path.includes("/preview")) return 3;
+
+    return 1;
+  }, [location.pathname]);
+
+  const isLastStep = currentStep === 3;
+
+  const getHeaderLabel = () => {
+    if (isLastStep) {
+      return t("issuer_preview_issuer_registration_preview_Lbl");
+    }
+    return t("issuer_registration_Lbl");
+  };
+
   return (
     <Stack>
       <TopBar />
@@ -41,11 +64,11 @@ const OnboardingIssuer = () => {
                 <Grid item>
                   <Typography
                     variant="h4"
-                    color="custom.dark.6"
-                    fontWeight={400}
+                    color="custom.dark.10"
+                    fontWeight={600}
                     sx={{ mb: 4, mt: 4 }}
                   >
-                    {t("issuer_registration_Lbl")}
+                    {getHeaderLabel()}
                   </Typography>
                 </Grid>
                 <Grid item>
